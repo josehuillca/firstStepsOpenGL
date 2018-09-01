@@ -5,11 +5,11 @@
 #ifndef FIRSTSTEPSOPENGL_SHADERPROGRAM_H
 #define FIRSTSTEPSOPENGL_SHADERPROGRAM_H
 
-#include <string>       // std::string
+#include <GL/glew.h>
 #include <iostream>     // std::cout
-#include <sstream>      // std::stringstream, std::stringbuf
 #include <stdio.h>
 #include <fstream>
+#include <sstream>      // std::stringstream, std::stringbuf
 
 using namespace std;
 
@@ -17,13 +17,13 @@ class ShaderProgram {
 private:
     unsigned int programId;
 
-    unsigned int loadAndCompileShader();
+    string loadFile(const string& filename);
+    unsigned int loadAndCompileShader(unsigned int type, const string & source);
 public:
     ShaderProgram();
 
-    void init();
+    void init(const string & vertexShader, const string & fragmentShader);
     unsigned int getProgramId() const;
-    string loadFile(string filename);
 };
 
 

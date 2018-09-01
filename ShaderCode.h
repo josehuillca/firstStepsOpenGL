@@ -18,6 +18,7 @@ private:
     string titleWindow;
 
     GLFWwindow* window;
+    unsigned int constructVertexArrayObject();
 public:
     ShaderCode();
 

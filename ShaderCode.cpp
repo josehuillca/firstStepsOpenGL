@@ -42,14 +42,48 @@ void ShaderCode::initGL() {
     }
 }
 
+unsigned int ShaderCode::constructVertexArrayObject() {
+    float positionData[6] = {
+            -0.5, -0.5,
+            0.0,  0.5,
+            0.5, -0.5
+    };
+    unsigned int bufferPosition;
+    glGenBuffers(1, &bufferPosition);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
+    glBufferData(GL_ARRAY_BUFFER, 6* sizeof(float), positionData, GL_STATIC_DRAW);
+
+    // very important the 'VAO-handle'
+    unsigned int vaoHandle;
+    glGenVertexArrays(1, &vaoHandle);
+    glBindVertexArray(vaoHandle);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+
+    return vaoHandle;
+}
+
 void ShaderCode::run() {
-    ShaderProgram program;
-    cout<<program.loadFile("Shaders/simple.frag")<<endl;
+    // creates the vertex array object. Must be performed before the shaders compilation.
+    unsigned int vaoHandle = constructVertexArrayObject();
+
+    // compile and link vertex and fragment shaders into
+    // a "program" that resides in the OpenGL driver
+    ShaderProgram shader;
+    shader.init("Shaders/simple.vert","Shaders/simple.frag");
+    glUseProgram(shader.getProgramId());
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glBindVertexArray(vaoHandle);
+        glEnableVertexAttribArray(0);
+
+        // draw VAO
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -60,3 +94,4 @@ void ShaderCode::run() {
 
     glfwTerminate();
 }
+
