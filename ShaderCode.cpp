@@ -44,9 +44,9 @@ void ShaderCode::initGL() {
 
 unsigned int ShaderCode::constructVertexArrayObject() {
     float positionData[12] = {
-            0.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f
+              0.5f, -0.5f, 0.0f, 1.0f,
+             -0.5f, -0.5f, 0.0f, 1.0f,
+              0.0f,  0.5f, 0.0f, 1.0f
     };
     float colorData[12] = {
             0.0f, 0.0f, 1.0f, 1.0f,
@@ -96,9 +96,6 @@ void ShaderCode::run() {
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glBindVertexArray(vaoHandle);
-        glEnableVertexAttribArray(0);
 
         // draw VAO
         glDrawArrays(GL_TRIANGLES, 0, 3);
