@@ -43,54 +43,44 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    const int num_vertex = 24;
-    float positionData[num_vertex] = {
-            -0.5f,  0.5f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.0f, 1.0f,
-             0.5f, -0.5f, 0.0f, 1.0f,
-             0.5f,  0.5f, 0.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f,
-             0.5f, -0.5f, 0.0f, 1.0f
+    const int num_vertex = 16;
+    float positionColorData[num_vertex] = {
+            -0.5f, -0.5f, 0.0f, 1.0f, //0
+             0.5f, -0.5f, 0.0f, 1.0f, //1
+             0.5f,  0.5f, 0.0f, 1.0f, //2
+            -0.5f,  0.5f, 0.0f, 1.0f  //3
     };
-    float colorData[num_vertex] = {
-            0.0f, 0.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f,
-            1.0f, 1.0f, 0.0f, 1.0f
+    const int num_indices = 6;
+    unsigned int indices[num_indices] = {
+            0, 1, 3,
+            1, 2, 3
     };
 
     unsigned int bufferPosition;
     glGenBuffers(1, &bufferPosition);
     glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
-    glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), positionData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), positionColorData, GL_STATIC_DRAW);
 
-    unsigned int bufferColor;
-    glGenBuffers(1, &bufferColor);
-    glBindBuffer(GL_ARRAY_BUFFER, bufferColor);
-    glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), colorData, GL_STATIC_DRAW);
+    unsigned int bufferIndex;
+    glGenBuffers(1, &bufferIndex);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices* sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     // very important the 'VAO-handle'
     unsigned int vaoHandle;
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
     glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
     // assignment of the position VBO to slot 0 of VAO
-    glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    // assignment of the color VBO to slot 1 of VAO
-    glBindBuffer(GL_ARRAY_BUFFER, bufferColor);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, 0);
 
-    return vaoHandle;
+
+    return bufferIndex;
 }
 
 void ShaderCode::run() {
     // creates the vertex array object. Must be performed before the shaders compilation.
-    unsigned int vaoHandle = constructVertexArrayObject();
+    unsigned int bufferIndex = constructVertexArrayObject();
 
     // compile and link vertex and fragment shaders into
     // a "program" that resides in the OpenGL driver
@@ -105,7 +95,9 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -113,6 +105,7 @@ void ShaderCode::run() {
         /* Poll for and process events */
         glfwPollEvents();
     }
+    glDeleteProgram(shader.getProgramId());
 
     glfwTerminate();
 }
