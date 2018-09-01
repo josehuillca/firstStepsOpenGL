@@ -1,8 +1,10 @@
-#version 330 core
+#version 330
 
-layout(location = 0) out vec4 color;
+smooth in vec4 theColor;
+
+out vec4 outputColor;
 
 void main()
 {
-    color = vec4(1.0, 0.0, 0.0, 1.0);
+    outputColor = theColor;
 }

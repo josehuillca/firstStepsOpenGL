@@ -43,22 +43,40 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    float positionData[6] = {
-            -0.5, -0.5,
-            0.0,  0.5,
-            0.5, -0.5
+    float positionData[12] = {
+            0.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f
     };
+    float colorData[12] = {
+            0.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 0.0f, 1.0f
+    };
+
     unsigned int bufferPosition;
     glGenBuffers(1, &bufferPosition);
     glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
-    glBufferData(GL_ARRAY_BUFFER, 6* sizeof(float), positionData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 12* sizeof(float), positionData, GL_STATIC_DRAW);
+
+    unsigned int bufferColor;
+    glGenBuffers(1, &bufferColor);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferColor);
+    glBufferData(GL_ARRAY_BUFFER, 12* sizeof(float), colorData, GL_STATIC_DRAW);
 
     // very important the 'VAO-handle'
     unsigned int vaoHandle;
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+    glEnableVertexAttribArray(1);
+
+    // assignment of the position VBO to slot 0 of VAO
+    glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    // assignment of the color VBO to slot 1 of VAO
+    glBindBuffer(GL_ARRAY_BUFFER, bufferColor);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     return vaoHandle;
 }
