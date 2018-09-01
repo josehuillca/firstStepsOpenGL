@@ -43,26 +43,32 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    float positionData[12] = {
-              0.5f, -0.5f, 0.0f, 1.0f,
-             -0.5f, -0.5f, 0.0f, 1.0f,
-              0.0f,  0.5f, 0.0f, 1.0f
+    float positionData[24] = {
+            -0.5f,  0.5f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f
     };
-    float colorData[12] = {
-            0.2f, 0.7f, 0.2f, 1.0f,
-            1.0f, 0.0f, 0.3f, 1.0f,
-            0.6f, 0.7f, 0.7f, 1.0f
+    float colorData[24] = {
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f,
+            0.0f, 0.0f, 1.0f, 1.0f
     };
 
     unsigned int bufferPosition;
     glGenBuffers(1, &bufferPosition);
     glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
-    glBufferData(GL_ARRAY_BUFFER, 12* sizeof(float), positionData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 224* sizeof(float), positionData, GL_STATIC_DRAW);
 
     unsigned int bufferColor;
     glGenBuffers(1, &bufferColor);
     glBindBuffer(GL_ARRAY_BUFFER, bufferColor);
-    glBufferData(GL_ARRAY_BUFFER, 12* sizeof(float), colorData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 24* sizeof(float), colorData, GL_STATIC_DRAW);
 
     // very important the 'VAO-handle'
     unsigned int vaoHandle;
@@ -98,7 +104,8 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
