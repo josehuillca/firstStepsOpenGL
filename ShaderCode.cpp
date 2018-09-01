@@ -49,9 +49,9 @@ unsigned int ShaderCode::constructVertexArrayObject() {
               0.0f,  0.5f, 0.0f, 1.0f
     };
     float colorData[12] = {
-            0.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, 0.0f, 0.0f, 1.0f,
-            0.0f, 1.0f, 0.0f, 1.0f
+            0.2f, 0.7f, 0.2f, 1.0f,
+            1.0f, 0.0f, 0.3f, 1.0f,
+            0.6f, 0.7f, 0.7f, 1.0f
     };
 
     unsigned int bufferPosition;
