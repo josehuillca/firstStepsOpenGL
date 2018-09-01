@@ -43,18 +43,22 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    const int num_vertex = 16;
+    const int num_vertex = 24;
     float positionData[num_vertex] = {
-             0.5f, -0.5f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.0f, 1.0f,
             -0.5f,  0.5f, 0.0f, 1.0f,
-             0.5f,  0.5f, 0.0f, 1.0f
+            -0.5f, -0.5f, 0.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f
     };
     float colorData[num_vertex] = {
             0.0f, 0.0f, 1.0f, 1.0f,
             0.0f, 0.0f, 1.0f, 1.0f,
             0.0f, 0.0f, 1.0f, 1.0f,
-            0.0f, 0.0f, 1.0f, 1.0f
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 0.0f, 1.0f
     };
 
     unsigned int bufferPosition;
@@ -101,8 +105,7 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
