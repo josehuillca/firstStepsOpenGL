@@ -43,7 +43,9 @@ void ShaderCode::initGL() {
 }
 
 void ShaderCode::run() {
-/* Loop until the user closes the window */
+    ShaderProgram program;
+    cout<<program.loadFile("Shaders/simple.frag")<<endl;
+    /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */

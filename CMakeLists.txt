@@ -11,7 +11,7 @@ if (APPLE)
     include_directories(/usr/local/include)
 endif (APPLE)
 
-add_executable(firstStepsOpenGL main.cpp ShaderCode.cpp ShaderCode.h)
+add_executable(firstStepsOpenGL main.cpp ShaderCode.cpp ShaderCode.h ShaderProgram.cpp ShaderProgram.h)
 target_link_libraries(firstStepsOpenGL
         glfw
         ${GLEW_LIBRARY}
