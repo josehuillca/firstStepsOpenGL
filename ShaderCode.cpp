@@ -43,15 +43,17 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    const int num_vertex = 48;
+    const int num_vertex = 64;
     float vertex_attributes[num_vertex] = {
             // x,   y,    z,    w       r,      g,      b,  a
             -0.5f,  0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
             -0.5f, -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
-             0.5f,  -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
-             0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
              0.5f, -0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f
     };
     // VBO
     unsigned int bufferPosition;
@@ -102,7 +104,7 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        glDrawArrays(GL_LINE_LOOP, 0, 6);
+        glDrawArrays(GL_LINES, 0, 8);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
