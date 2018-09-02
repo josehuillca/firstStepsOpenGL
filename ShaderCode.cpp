@@ -45,65 +45,42 @@ void ShaderCode::initGL() {
 unsigned int ShaderCode::constructVertexArrayObject() {
     const int num_vertex = 48;
     float vertex_attributes[num_vertex] = {
-            -0.5f, -0.5f, 0.0f, 1.0f, //0 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //1  -- R,G,B,A
-             0.5f, -0.5f, 0.0f, 1.0f, //2 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //3  -- R,G,B,A
-            -0.5f,  0.5f, 0.0f, 1.0f, //4 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //5  -- R,G,B,A
-             0.5f, -0.5f, 0.0f, 1.0f, //6 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //7  -- R,G,B,A
-            -0.5f,  0.5f, 0.0f, 1.0f, //8 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //9  -- R,G,B,A
-             0.5f,  0.5f, 0.0f, 1.0f, //10 <-- X,Y,Z,W
-            0.0f,  0.0f, 1.0f, 1.0f, //11  -- R,G,B,A
+            // x,   y,    z,    w       r,      g,      b,  a
+            -0.5f, -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f,   0.0f,  0.0f, 1.0f, 1.0f,
+             0.5f, -0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f, 1.0f,   1.0f,  1.0f, 0.0f, 1.0f,
     };
-
-    // Indices with triangles shape
-    const int num_indices = 6;
-    unsigned int indices[num_indices] = {
-            0, 2, 4,
-            6, 8, 10
-    };
-    unsigned int indicesColor[num_indices] = {
-            1, 3, 5,
-            7, 9, 11
-    };
-
-    unsigned int attrSize  = 8*sizeof(float); // 8 -> x, y, z, w, R, G, B, A
-    unsigned int colorOffs = 4*sizeof(float);
-
+    // VBO
     unsigned int bufferPosition;
     glGenBuffers(1, &bufferPosition);
     glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
     glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), vertex_attributes, GL_STATIC_DRAW);
 
-    unsigned int bufferIndex;
-    glGenBuffers(1, &bufferIndex);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices* sizeof(unsigned int), indices, GL_STATIC_DRAW);
+    // The sizes of the vertex and color components
+    unsigned int vertexSize  = 4*sizeof(float);
+    unsigned int colorSize = 4*sizeof(float);
 
-    unsigned int bufferIndexColor;
-    glGenBuffers(1, &bufferIndexColor);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndexColor);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices* sizeof(unsigned int), indicesColor, GL_STATIC_DRAW);
+    // The 'stride' is the sum of the sizes of individual components
+    unsigned int stride = vertexSize + colorSize;
+    // The 'offset is the number of bytes from the start of the tuple
+    unsigned long offsetPosition = 0;
+    unsigned long offsetColor    = 4 * sizeof(float);
 
     // very important the 'VAO-handle'
     unsigned int vaoHandle;
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
+
+    // assignment of the position VBO to slot 0 of VAO
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(offsetPosition));
+    // assignment of the color VBO to slot 0 of VAO
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid *)(offsetColor));
+
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndexColor);
-    // assignment of the position VBO to slot 0 of VAO
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE,0, 0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
-    // assignment of the position VBO to slot 0 of VAO
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, 0);
-    glEnableVertexAttribArray(0);
 
     return vaoHandle;
 }
@@ -125,8 +102,7 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
