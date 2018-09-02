@@ -43,44 +43,74 @@ void ShaderCode::initGL() {
 }
 
 unsigned int ShaderCode::constructVertexArrayObject() {
-    const int num_vertex = 16;
-    float positionColorData[num_vertex] = {
-            -0.5f, -0.5f, 0.0f, 1.0f, //0
-             0.5f, -0.5f, 0.0f, 1.0f, //1
-             0.5f,  0.5f, 0.0f, 1.0f, //2
-            -0.5f,  0.5f, 0.0f, 1.0f  //3
+    const int num_vertex = 48;
+    float vertex_attributes[num_vertex] = {
+            -0.5f, -0.5f, 0.0f, 1.0f, //0 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //1  -- R,G,B,A
+             0.5f, -0.5f, 0.0f, 1.0f, //2 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //3  -- R,G,B,A
+            -0.5f,  0.5f, 0.0f, 1.0f, //4 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //5  -- R,G,B,A
+             0.5f, -0.5f, 0.0f, 1.0f, //6 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //7  -- R,G,B,A
+            -0.5f,  0.5f, 0.0f, 1.0f, //8 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //9  -- R,G,B,A
+             0.5f,  0.5f, 0.0f, 1.0f, //10 <-- X,Y,Z,W
+            0.0f,  0.0f, 1.0f, 1.0f, //11  -- R,G,B,A
     };
+
+    // Indices with triangles shape
     const int num_indices = 6;
     unsigned int indices[num_indices] = {
-            0, 1, 3,
-            1, 2, 3
+            0, 2, 4,
+            6, 8, 10
     };
+    unsigned int indicesColor[num_indices] = {
+            1, 3, 5,
+            7, 9, 11
+    };
+
+    unsigned int attrSize  = 8*sizeof(float); // 8 -> x, y, z, w, R, G, B, A
+    unsigned int colorOffs = 4*sizeof(float);
 
     unsigned int bufferPosition;
     glGenBuffers(1, &bufferPosition);
     glBindBuffer(GL_ARRAY_BUFFER, bufferPosition);
-    glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), positionColorData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, num_vertex* sizeof(float), vertex_attributes, GL_STATIC_DRAW);
 
     unsigned int bufferIndex;
     glGenBuffers(1, &bufferIndex);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices* sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
+    unsigned int bufferIndexColor;
+    glGenBuffers(1, &bufferIndexColor);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndexColor);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices* sizeof(unsigned int), indicesColor, GL_STATIC_DRAW);
+
     // very important the 'VAO-handle'
     unsigned int vaoHandle;
     glGenVertexArrays(1, &vaoHandle);
     glBindVertexArray(vaoHandle);
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndexColor);
+    // assignment of the position VBO to slot 0 of VAO
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE,0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
     // assignment of the position VBO to slot 0 of VAO
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, 0);
+    glEnableVertexAttribArray(0);
 
-
-    return bufferIndex;
+    return vaoHandle;
 }
 
 void ShaderCode::run() {
     // creates the vertex array object. Must be performed before the shaders compilation.
-    unsigned int bufferIndex = constructVertexArrayObject();
+    unsigned int vaoHandle = constructVertexArrayObject();
 
     // compile and link vertex and fragment shaders into
     // a "program" that resides in the OpenGL driver
@@ -95,7 +125,6 @@ void ShaderCode::run() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw VAO
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferIndex);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
 
